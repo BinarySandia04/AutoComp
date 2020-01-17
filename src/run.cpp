@@ -191,13 +191,13 @@ std::string exec(std::string cmd) {
 void graph(long int x, int tests){
 	while(x > 0){
 		if(x <= 250 * tests){
-			std::cout << termcolor::green << "-";
+			std::cout << termcolor::on_green << " ";
 			x -= 20 * tests;
 		} else if (x <= 400 * tests){
-			std::cout << termcolor::yellow << "-";
+			std::cout << termcolor::on_yellow << " ";
 			x -= 30 * tests;
 		} else {
-			std::cout << termcolor::red << "-";
+			std::cout << termcolor::on_red << " ";
 			x -= 50 * tests;
 		}
 	}
@@ -206,13 +206,13 @@ void graph(long int x, int tests){
 void graph(long int x){
 	while(x > 0){
 		if(x <= 250){
-			std::cout << termcolor::green << "-";
+			std::cout << termcolor::on_green << " ";
 			x -= 50;
 		} else if (x <= 1000){
-			std::cout << termcolor::yellow << "-";
+			std::cout << termcolor::on_yellow << " ";
 			x -= 70;
 		} else {
-			std::cout << termcolor::red << "-";
+			std::cout << termcolor::on_red << " ";
 			x -= 100;
 		}
 	}
@@ -233,7 +233,7 @@ void colorize(long int x, int tests){
 }
 
 void header(){
-	std::cout << termcolor::white << termcolor::on_green << getRaya('#', 0) << termcolor::reset << endl;
+	std::cout << termcolor::reverse << getRaya('#', 0) << termcolor::reset << endl;
 }
 
 int main(){
@@ -325,7 +325,7 @@ bool compile(){
 
 void testProgram(){
 	std::cout << termcolor::green << "> " << termcolor::white << "Running your program..." << termcolor::white << endl << endl;
-	std::cout << termcolor::white << termcolor::on_blue << getRaya('-', 0) << endl << "PROGRAM EXECUTION:" << endl << termcolor::reset;
+	std::cout << termcolor::white << termcolor::on_blue << getRaya('-', 0) << endl << "PROGRAM EXECUTION:" << endl << termcolor::reset << std::flush;
 	std::system("./main");
 	std::cout << termcolor::on_blue << getRaya('-', 0) << termcolor::reset << endl << endl;
 	std::cout << termcolor::green << "> " << termcolor::reset << "Program execution terminated." << endl << endl;
