@@ -1,4 +1,4 @@
-// (c) Aran Roig, 2019
+// (c) Aran Roig, 2019 - 2020
 // Agradecimientos a izanbf por inspirarme un poco con su propio debug.h
 
 template <class T>
@@ -23,7 +23,7 @@ std::ostream& operator<<(std::ostream& os, const std::pair<A, B>& obj){
 }
 
 std::ostream& operator<<(std::ostream& os, const bool& obj)
-{   
+{
     if(obj) os << "\'True\'";
     else os << "\'False\'";
     return os;
