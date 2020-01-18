@@ -127,7 +127,7 @@ void initialSetup(){
 				cases.open(pPath + "/cases.txt");
 
 				// Poner el titulo
-				cases << "Contest " << x + 'A' << " - Problem " << y << endl;
+				cases << "Contest " << (char)(x + 'A') << " - Problem " << y << endl;
 				cases << endl << "// Input Here" << endl;
 				cases << getCaseLine() << endl;
 				cases << endl << "// Output here" << endl;
@@ -138,6 +138,10 @@ void initialSetup(){
 				cases.close();
 			}
 		}
+		printd("Removing run...");
+		std::remove("run");
+		printd("Run removed.");
+		std::cout << endl;
 		printd("Done! Happy coding! ;)");
 		if(restart){
 			std::cout << termcolor::cyan << termcolor::reverse << "NOTE:" << termcolor::reset << " you will need to restart the terminal to run your programs" << endl;
