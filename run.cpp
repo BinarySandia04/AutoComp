@@ -83,14 +83,14 @@ void testProgramYeet(){
 	while(std::getline(test, line)){
 		std::string casecin = "";
 		std::getline(test, line);
-		while(line.find("---------------------------") == std::string::npos){
+		while(line.find("~~~~~~~~~~~~~~~~~~~~~~~~~~") == std::string::npos){
 			casecin += line + endl;
 			std::getline(test, line);
 		}
 
 		std::getline(test, line);
 		std::string caseout = "";
-		while(line.find("---------------------------") == std::string::npos){
+		while(line.find("~~~~~~~~~~~~~~~~~~~~~~~~~~~") == std::string::npos){
 			caseout += line + endl;
 			std::getline(test, line);
 		}
