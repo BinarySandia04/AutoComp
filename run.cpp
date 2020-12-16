@@ -27,6 +27,7 @@ void graph(long int x, int tests); // Fa una grafica encara mes bonica amb tests
 std::string exec(std::string cmd); // Executa una cosa molt bonica al cmd
 bool compareFile(std::string a, std::string b); // Compara dos files
 int numberDigits(int n);
+void generateMainCpp();
 //
 //
 
@@ -245,13 +246,23 @@ int main(){
 	header();
 	std::cout << endl;
 	if(checkCompilation()) return 0;
+	
+	// Generar
+	generateMainCpp();
+
 	// Copiar
 	copyMainCpp();
+	
 	// Ejecutar
 	testProgram();
+	
 	std::cout << endl << termcolor::reverse << "End of working!" << termcolor::reset << endl << std::flush;
 std::this_thread::sleep_for(std::chrono::milliseconds(750));	
 	std::system("clear");
+}
+
+void generateMainCpp(){
+	// Muy facil, haz un archivo que se llame out.cpp, que sea la combinación de header.cpp y main.cpp
 }
 
 bool checkCompilation(){
@@ -262,7 +273,7 @@ bool checkCompilation(){
 		return false;
 	} else {
 		// Comparar
-		if(!compareFile("main.cpp", ".mainold.cpp")){
+		if(!compareFile("out.cpp", ".mainold.cpp")){
 			std::cout << termcolor::green << "> " << termcolor::white << "Program needs to be compiled. " << endl << endl << termcolor::reverse << "Compiling..." << termcolor::reset << endl << endl;
 			if(compile()) return true;
 			return false;
@@ -273,7 +284,7 @@ bool checkCompilation(){
 }
 
 void copyMainCpp(){
-	std::ifstream copy("main.cpp", std::ios::binary);
+	std::ifstream copy("out.cpp", std::ios::binary);
     std::ofstream dest(".mainold.cpp", std::ios::binary);
     dest << copy.rdbuf();
 }
@@ -284,10 +295,10 @@ bool compile(){
 		std::cout << termcolor::green << "> " << termcolor::white << "Creating new compile defaults..." << termcolor::white << endl;
 		std::system("touch compile.txt");
 		std::ofstream compile("compile.txt", std::ios::binary);
-		compile << "g++ main.cpp -Wall -Wextra -O2 -std=c++17 -DLOCAL -o main";
+		compile << "g++ out.cpp -Wall -Wextra -O2 -std=c++17 -DLOCAL -o run";
 		compile.close();
 		std::cout << termcolor::green << "> " << termcolor::white << "Compile defaults " << termcolor::reverse << "saved" << termcolor::reset << endl;
-		std::cout << termcolor::cyan << termcolor::reverse << "INFO:" << termcolor::reset << " compile defaults are the file where you put your commands to compile your code. This file is saved in " << termcolor::reverse << "compile.txt" << termcolor::reset << " and the default settings are " << termcolor::reverse << "g++ main.cpp -Wall -Wextra -02 -std=c++17 -DLOCAL -o main" << termcolor::reset << endl;
+		std::cout << termcolor::cyan << termcolor::reverse << "INFO:" << termcolor::reset << " compile defaults are the file where you put your commands to compile your code. This file is saved in " << termcolor::reverse << "compile.txt" << termcolor::reset << " and the default settings are " << termcolor::reverse << "g++ out.cpp -Wall -Wextra -02 -std=c++17 -DLOCAL -o main" << termcolor::reset << endl;
 	}
 
 	std::ifstream compilerLines("compile.txt");
@@ -307,7 +318,7 @@ bool compile(){
 		compilerLines.close();
 		if(posibleErrors){
 			std::cout << termcolor::cyan << termcolor::reverse << "INFO:" << termcolor::reset << " if the error was caused by a " << termcolor::reverse << "warning" << termcolor::reset << ", you can remove the default parameters " << termcolor::reverse << "-Wall -Wextra" << termcolor::reset << " in the " << termcolor::reverse << "compile.txt" << termcolor::reset << " file." << endl << endl; 
-			std::cout << termcolor::red << termcolor::reverse << "Error compilating main.cpp" << termcolor::reset << endl;
+			std::cout << termcolor::red << termcolor::reverse << "Error compilating out.cpp" << termcolor::reset << endl;
 			std::cout << endl;
 			header();
 			std::cout << endl << termcolor::reverse << "Press enter to exit" << termcolor::reset << endl;
@@ -326,7 +337,7 @@ bool compile(){
 void testProgram(){
 	std::cout << termcolor::green << "> " << termcolor::white << "Running your program..." << termcolor::white << endl << endl;
 	std::cout << termcolor::white << termcolor::on_blue << getRaya('-', 0) << endl << "PROGRAM EXECUTION:" << endl << termcolor::reset << std::flush;
-	std::system("./main");
+	std::system("./run");
 	std::cout << termcolor::on_blue << getRaya('-', 0) << termcolor::reset << endl << endl;
 	std::cout << termcolor::green << "> " << termcolor::reset << "Program execution terminated." << endl << endl;
 	std::cout << termcolor::green << "> " << termcolor::reset << termcolor::reverse << "Do you want to execute public cases?" << termcolor::reset << " ('y' = Yes)" << termcolor::white << endl;

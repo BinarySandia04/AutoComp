@@ -1,5 +1,5 @@
 // AutoComp setup.
-// (c) Aran Roig, 2020
+// (c) Aran Roig, 2020 XDDDDD
 //
 // Aquest cpp s'encarrega de la configuracio dels directoris dels contests
 
@@ -47,6 +47,18 @@ void createFolder(std::string p);
 bool fileExists(std::string p);
 bool fileEmpty(std::string p);
 void copyFile(std::string a, std::string b);
+
+void checkContests();
+void createContests();
+void generateContestsFolder(int p, int r);
+
+void buildRun();
+void applyRunAlias();
+void printCompilerSettings();
+
+void cleanup();
+void deleteContestFolder();
+
 std::string getFile(std::string p);
 std::string getCaseLine();
 
@@ -80,85 +92,121 @@ void initialSetup(){
 	}
 	
 	printd("Checking contests folder...");
+	checkContests();
+}
+
+void buildRun(){
+	printd("Building run...");
+	std::system("g++ run.cpp -lstdc++fs -std=gnu++0x -o run");
+	printd("Run builded correctly");	
+}
+
+void applyRunAlias(){
+	std::system("grep 'alias run' ~/.bashrc > .resgrep.p");
+	if(fileEmpty(".resgrep.p")){
+		printd("Adding alias run...");
+		std::system("echo 'alias run=./run' >> ~/.bashrc");
+		printd("Alias run added. Write run inside the console to execute AutoComp");
+	}
+	std::remove(".resgrep.p");
+	printd("Done.");
+	std::cout << termcolor::cyan << termcolor::reverse << "NOTE:" << termcolor::reset << " you will need to restart the terminal to run your programs" << endl;
+}
+
+void printCompilerSettings(){
+	printd("Default compiler settings:");
+	std::cout << endl << getFile("rsc/compile.txt") << endl << endl;
+	printd("Generating contest folders. This might take a while...");
+}
+
+void checkContests(){
 	if(!folderExists("contests")){
-		createFolder("contests");
-		printd("Created contests folder");
-		printd("Building run...");
-		std::system("g++ run.cpp -lstdc++fs -std=gnu++0x -o run");
-		printd("Run builded correctly");
-		std::cout << endl;
-		std::system("grep 'alias run' ~/.bashrc > .resgrep.p");
-		if(fileEmpty(".resgrep.p")){
-			printd("Adding alias run...");
-			std::system("echo 'alias run=./run' >> ~/.bashrc");
-			printd("Alias run added. Write run inside the console to execute AutoComp");
-			restart = true;
-		}
-		std::remove(".resgrep.p");
-		printd("Done. Need to restart terminal to take effect");
-		printExplanation();
-		int p = promptNumber();
-		while(p > 25){
-			std::cout << termcolor::red << "> Invalid number. It must be smaller than 26" << endl << "> ";
-			std::cin >> p;
-		}
-		std::cout << termcolor::red << "> " << termcolor::reset << "And how many problems for each folder?" << endl;
-		int r = promptNumber();
-		
-		printd("Default compiler settings:");
-		std::cout << endl << getFile("rsc/compile.txt") << endl << endl;
-		printd("Generating contest folders. This might take a while...");
-
-		for(int x = 0; x < p; x++){
-			std::string path = "contests/";
-			path += x + 'A';
-			createFolder(path);
-			path += '/';
-			for(int y = 1; y <= r; y++){
-				std::string pPath = path + std::to_string(y);
-				createFolder(pPath);
-				copyFile("rsc/main.cpp", pPath + "/main.cpp");
-				copyFile("run", pPath + "/run");
-				copyFile("rsc/compile.txt", pPath + "/compile.txt");
-				copyFile("rsc/debug.h", pPath + "/debug.h");
-
-				// Generar cases.txt
-				std::ofstream cases;
-				cases.open(pPath + "/cases.txt");
-
-				// Poner el titulo
-				cases << "Contest " << (char)(x + 'A') << " - Problem " << y << endl;
-				cases << endl << "// Input Here" << endl;
-				cases << getCaseLine() << endl;
-				cases << endl << "// Output here" << endl;
-				cases << getCaseLine() << endl << endl;
-				cases << "// Second input here" << endl;
-				cases << getCaseLine() << endl << "// Second" << endl << "// Output" << endl << "// Here" << endl << getCaseLine() << endl;
-
-				cases.close();
-			}
-		}
-		printd("Removing run...");
-		std::remove("run");
-		printd("Run removed.");
-		std::cout << endl;
-		printd("Done! Happy coding! ;)");
-		if(restart){
-			std::cout << termcolor::cyan << termcolor::reverse << "NOTE:" << termcolor::reset << " you will need to restart the terminal to run your programs" << endl;
-		}
+		createContests();
 	} else {
-		warning("Do you really want to reset the contest folder? (y = yes)");
-		std::cout << endl;
-		char r;
-		std::cin >> r;
-		if(r == 'y' || r == 'Y'){
-			printd("Deleting contest folder...");
-			
-			// Delete contest folder
-			std::system("rm -R contests");
-			std::system("./setup");
+		deleteContestFolder();
+	}
+}
+
+void deleteContestFolder(){
+	warning("Do you really want to delete the contest folder? (y = yes)");
+	std::cout << endl;
+	char r;
+	std::cin >> r;
+	if(r == 'y' || r == 'Y'){
+		printd("Deleting contest folder...");
+		
+		// Delete contest folder
+		std::system("rm -R contests");
+		std::system("./setup");
+	}
+}
+
+void cleanup(){
+	printd("Removing run...");
+	std::remove("run");
+	printd("Run removed.");
+	std::cout << endl;
+	printd("Done! Happy coding! ;)");
+	
+}
+
+void createContests(){
+	createFolder("contests");
+	printd("Created contests folder");
+	
+	buildRun();
+		
+	applyRunAlias();
+
+	printExplanation();
+		
+	// Ask for contest number
+
+	int p = promptNumber();
+	while(p > 25){
+		std::cout << termcolor::red << "> Invalid number. It must be smaller than 26" << endl << "> ";
+		std::cin >> p;
+	}
+	std::cout << termcolor::red << "> " << termcolor::reset << "And how many problems for each folder?" << endl;
+	int r = promptNumber();
+	
+	printCompilerSettings();
+
+	generateContestsFolder(p, r);
+
+	cleanup();
+}
+
+void generateContestsFolder(int p, int r){
+	for(int x = 0; x < p; x++){
+		std::string path = "contests/";
+		path += x + 'A';
+		createFolder(path);
+		path += '/';
+		for(int y = 1; y <= r; y++){
+			std::string pPath = path + std::to_string(y);
+			createFolder(pPath);
+			copyFile("rsc/main.cpp", pPath + "/main.cpp");
+			copyFile("run", pPath + "/run");
+			copyFile("rsc/compile.txt", pPath + "/compile.txt");
+			copyFile("rsc/debug.h", pPath + "/debug.h");
+			copyFile("rsc/header.cpp", pPath + "/header.cpp");
+			// Generar cases.txt
+			std::ofstream cases;
+			cases.open(pPath + "/cases.txt");
+			// Poner el titulo
+			cases << "Contest " << (char)(x + 'A') << " - Problem " << y << endl;
+			cases << endl << "// Input Here" << endl;
+			cases << getCaseLine() << endl;
+			cases << endl << "// Output here" << endl;
+			cases << getCaseLine() << endl << endl;
+			cases << "// Second input here" << endl;
+			cases << getCaseLine() << endl << "// Second" << endl << "// Output" << endl << "// Here" << endl << getCaseLine() << endl;
+
+			cases.close();
 		}
 	}
+
 }
 
 std::string getFile(std::string p){
@@ -244,8 +292,7 @@ int getRows(){
 void intro(){
 	clear();
 	header();
-	std::cout << termcolor::cyan << termcolor::bold << print("xXxXxXx AutoComp xXxXxXx") << termcolor::white << endl;
-	std::cout << termcolor::yellow << termcolor::blue << print("A Competitive Programming auto compiler kit") << endl;
+	std::cout << termcolor::cyan << termcolor::bold << print("AutoComp") << termcolor::white << endl;
 	std::cout << termcolor::yellow << print("Aran Roig, (c) 2020") << termcolor::reset << endl;
 	header();
 	std::cout << endl;
