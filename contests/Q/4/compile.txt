@@ -1,1 +1,0 @@
-g++ main.cpp -Wall -Wextra -O2 -std=c++17 -DLOCAL -o main
